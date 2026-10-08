@@ -17,7 +17,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="To-Do List API",
     description="Micro-API de gerenciamento de tarefas — Mini Projeto AKCIT/UFG",
-    version="0.1.0",
+    version="1.0.0",
     lifespan=lifespan,
 )
 app.include_router(router)
