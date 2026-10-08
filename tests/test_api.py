@@ -1,5 +1,7 @@
 import pytest
 
+from app.models import DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH
+
 
 def create_task(client, **data):
     response = client.post("/tasks", json={"title": "Estudar FastAPI", **data})
@@ -16,9 +18,25 @@ def test_create_task(client):
     assert "id" in task and "created_at" in task
 
 
-@pytest.mark.parametrize("payload", [{}, {"title": ""}, {"title": "x" * 201}])
-def test_create_task_rejects_invalid_title(client, payload):
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {},
+        {"title": ""},
+        {"title": "x" * (TITLE_MAX_LENGTH + 1)},
+        {"title": "ok", "description": "x" * (DESCRIPTION_MAX_LENGTH + 1)},
+    ],
+)
+def test_create_task_rejects_invalid_data(client, payload):
     assert client.post("/tasks", json=payload).status_code == 422
+
+
+def test_create_task_accepts_max_lengths(client):
+    task = create_task(
+        client, title="x" * TITLE_MAX_LENGTH, description="x" * DESCRIPTION_MAX_LENGTH
+    )
+
+    assert len(task["title"]) == TITLE_MAX_LENGTH
 
 
 def test_list_tasks(client):

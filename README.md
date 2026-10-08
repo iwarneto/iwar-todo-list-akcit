@@ -110,7 +110,7 @@ curl -X DELETE http://127.0.0.1:8000/tasks/1
 uv run pytest
 ```
 
-São 22 testes: 5 unitários da camada de serviço e 17 dos endpoints. Eles usam um SQLite em memória, isolado a cada teste, e não alteram o `todo.db`.
+São 24 testes: 5 unitários da camada de serviço e 19 dos endpoints. Eles usam um SQLite em memória, isolado a cada teste, e não alteram o `todo.db`.
 
 Para checar o estilo do código:
 

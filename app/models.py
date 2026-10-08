@@ -4,6 +4,9 @@ from enum import StrEnum
 from pydantic import field_validator
 from sqlmodel import Field, SQLModel
 
+TITLE_MAX_LENGTH = 200
+DESCRIPTION_MAX_LENGTH = 1000
+
 
 class TaskStatus(StrEnum):
     PENDING = "pending"
@@ -11,8 +14,8 @@ class TaskStatus(StrEnum):
 
 
 class TaskBase(SQLModel):
-    title: str = Field(min_length=1, max_length=200)
-    description: str | None = Field(default=None, max_length=1000)
+    title: str = Field(min_length=1, max_length=TITLE_MAX_LENGTH)
+    description: str | None = Field(default=None, max_length=DESCRIPTION_MAX_LENGTH)
 
 
 class Task(TaskBase, table=True):
@@ -30,8 +33,8 @@ class TaskCreate(TaskBase):
 class TaskUpdate(SQLModel):
     """Atualização parcial: só os campos enviados são alterados."""
 
-    title: str | None = Field(default=None, min_length=1, max_length=200)
-    description: str | None = Field(default=None, max_length=1000)
+    title: str | None = Field(default=None, min_length=1, max_length=TITLE_MAX_LENGTH)
+    description: str | None = Field(default=None, max_length=DESCRIPTION_MAX_LENGTH)
     status: TaskStatus | None = None
 
     @field_validator("title", "status")
