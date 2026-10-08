@@ -1,6 +1,6 @@
 [project]
 name = "iwar-todo-list-akcit"
-version = "1.0.0"
+version = "1.0.1"
 description = "Micro-API de gerenciamento de tarefas (To-Do List) com FastAPI"
 requires-python = ">=3.12"
 dependencies = [
