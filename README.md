@@ -27,18 +27,67 @@ Mini projeto da pós-graduação UFG / AKCIT, desenvolvido com o auxílio de IA 
 
 ## Como rodar localmente
 
-### Opção 1 — com uv (recomendado)
+### Pré-requisitos
 
-```bash
-git clone https://github.com/iwarneto/iwar-todo-list-akcit.git
-cd iwar-todo-list-akcit
-uv sync
-uv run uvicorn app.main:app --reload
+- **[Git](https://git-scm.com/downloads)**, para clonar o repositório.
+- **[uv](https://docs.astral.sh/uv/)**, para instalar as dependências e rodar a aplicação. Se o Python 3.12+ não estiver instalado, o uv baixa uma versão automaticamente.
+
+Para instalar o uv (depois, feche e abra o terminal):
+
+```powershell
+# Windows (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-O `uv sync` cria o ambiente virtual e instala as versões exatas do `uv.lock`.
+```bash
+# Linux / macOS
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
 
-### Opção 2 — com pip
+### Início rápido: um comando
+
+Este comando clona o projeto, instala as dependências e inicia a API:
+
+```bash
+# Linux / macOS / Git Bash
+git clone https://github.com/iwarneto/iwar-todo-list-akcit.git && cd iwar-todo-list-akcit && uv run uvicorn app.main:app
+```
+
+```powershell
+# Windows (PowerShell)
+git clone https://github.com/iwarneto/iwar-todo-list-akcit.git; cd iwar-todo-list-akcit; uv run uvicorn app.main:app
+```
+
+Quando aparecer `Uvicorn running on http://127.0.0.1:8000`, acesse **http://127.0.0.1:8000/docs** para testar a API pelo navegador. Para encerrar, pressione `Ctrl+C`.
+
+> O `uv run` cria o ambiente virtual e instala as versões exatas do `uv.lock` antes de executar. Por isso não há etapa de instalação separada.
+
+![Documentação interativa da API no Swagger UI](docs/img/swagger.png)
+
+### Passo a passo com uv
+
+1. Clone o repositório e entre na pasta:
+   ```bash
+   git clone https://github.com/iwarneto/iwar-todo-list-akcit.git
+   cd iwar-todo-list-akcit
+   ```
+2. Instale as dependências:
+   ```bash
+   uv sync
+   ```
+3. Inicie a API (o `--reload` reinicia o servidor quando o código muda):
+   ```bash
+   uv run uvicorn app.main:app --reload
+   ```
+4. Acesse **http://127.0.0.1:8000/docs**. O banco `todo.db` é criado automaticamente na primeira execução.
+5. Em outro terminal, na mesma pasta, rode os testes:
+   ```bash
+   uv run pytest
+   ```
+
+### Alternativa com pip
+
+Para quem prefere não usar o uv (requer Python 3.12+ instalado):
 
 ```bash
 python -m venv .venv
@@ -48,18 +97,29 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-Com o servidor no ar, acesse **http://127.0.0.1:8000/docs** para testar a API pelo navegador. O banco `todo.db` é criado automaticamente na primeira execução.
+### Atalhos com Makefile (opcional)
 
-![Documentação interativa da API no Swagger UI](docs/img/swagger.png)
+O `Makefile` reúne os comandos do dia a dia. Ele precisa do `make`, que é nativo no Linux e no macOS. Se o comando `make --version` não funcionar, instale:
 
-### Atalhos com Makefile
+```powershell
+# Windows (depois, feche e abra o terminal)
+winget install ezwinports.make
+```
 
-Com o `make` disponível (nativo em Linux e macOS; no Windows: `winget install ezwinports.make`):
+```bash
+# macOS
+xcode-select --install
+
+# Ubuntu / Debian
+sudo apt install make
+```
+
+Depois, na pasta do projeto:
 
 | Comando | O que faz |
 |---|---|
 | `make install` | Instala as dependências (`uv sync`) |
-| `make run` | Inicia a API com recarga automática |
+| `make run` | Inicia a API com recarga automática (e instala o que faltar) |
 | `make test` | Executa os testes |
 | `make lint` | Verifica estilo e formatação sem alterar arquivos |
 | `make format` | Corrige o estilo e formata o código |
