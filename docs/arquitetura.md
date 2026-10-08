@@ -102,7 +102,9 @@ iwar-todo-list-akcit/
 │   ├── test_service.py  # testes unitários do service
 │   └── test_api.py      # testes dos endpoints
 ├── docs/
-│   └── arquitetura.md   # este documento
+│   ├── arquitetura.md   # este documento
+│   └── img/             # capturas de tela
+├── Makefile             # atalhos: install, run, test, lint, format
 ├── pyproject.toml       # dependências e configuração (uv, Ruff, pytest)
 ├── uv.lock              # versões travadas
 ├── requirements.txt     # exportado do uv.lock, para quem usa pip

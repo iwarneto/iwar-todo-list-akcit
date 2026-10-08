@@ -50,6 +50,21 @@ uvicorn app.main:app --reload
 
 Com o servidor no ar, acesse **http://127.0.0.1:8000/docs** para testar a API pelo navegador. O banco `todo.db` é criado automaticamente na primeira execução.
 
+![Documentação interativa da API no Swagger UI](docs/img/swagger.png)
+
+### Atalhos com Makefile
+
+Com o `make` disponível (nativo em Linux e macOS; no Windows: `winget install ezwinports.make`):
+
+| Comando | O que faz |
+|---|---|
+| `make install` | Instala as dependências (`uv sync`) |
+| `make run` | Inicia a API com recarga automática |
+| `make test` | Executa os testes |
+| `make lint` | Verifica estilo e formatação sem alterar arquivos |
+| `make format` | Corrige o estilo e formata o código |
+| `make requirements` | Regenera o `requirements.txt` a partir do `uv.lock` |
+
 ## Endpoints
 
 | Método | Rota | Descrição | Sucesso |
@@ -133,14 +148,40 @@ tests/
 ├── test_service.py
 └── test_api.py
 docs/
-└── arquitetura.md   # diagramas Mermaid e decisões de arquitetura
+├── arquitetura.md   # diagramas Mermaid e decisões de arquitetura
+└── img/             # capturas de tela
+Makefile             # atalhos: install, run, test, lint, format
 ```
 
 A arquitetura em camadas (controller → service → repository) e os diagramas estão em [docs/arquitetura.md](docs/arquitetura.md).
 
-## Uso de IA generativa no desenvolvimento
+## Como a IA acelerou este projeto
 
-O projeto foi construído em pareamento com o **Claude Code** (modelo **Claude Opus 5.5**), seguindo as etapas do material da disciplina. As decisões finais e a revisão ficaram com o autor.
+O projeto foi construído em pareamento com o **Claude Code** (modelo **Claude Opus 5.5**), seguindo as etapas do material da disciplina. A IA propôs e implementou; as decisões de escopo, a aprovação de cada etapa e a validação final ficaram com o autor.
+
+### Ganhos de produtividade
+
+A estimativa do autor é de **cerca de 1 semana** para fazer o projeto sem IA. Com o Claude Code, o núcleo ficou pronto em **cerca de 1 hora**: código, 24 testes, diagramas, README e release. O ganho maior veio do que costuma consumir mais tempo e menos raciocínio: boilerplate das camadas, casos de teste de erro e documentação.
+
+### Desafios superados com a IA
+
+- **Material desatualizado.** O material da disciplina sugere `pip` + `requirements.txt`, `psycopg2` e `black`. A IA comparou essa stack com alternativas atuais, e o projeto adotou **uv**, **SQLModel** e **Ruff**. O `requirements.txt` continua sendo gerado a partir do `uv.lock`, para quem prefere `pip`.
+- **Dependências infladas.** O pacote recomendado pela documentação do FastAPI, `fastapi[standard]`, instalava **58 pacotes**, incluindo telemetria e um CLI de nuvem. Declarar só o necessário reduziu esse número para **26**, com a mesma funcionalidade.
+- **Depreciação e alerta de segurança.** O Starlette 1.7 deprecou o `httpx` no cliente de testes. A troca para `httpx2` disparou um alerta automático de possível *typosquatting*. Em vez de aceitar ou ignorar o alerta, as evidências foram verificadas: o próprio Starlette pede o pacote, que é mantido pela Pydantic e tem a versão travada no lockfile. Conclusão: falso positivo.
+- **Caso de borda na atualização.** Um `PATCH {"title": null}` passaria pela validação e quebraria no banco com erro `500`. Um validador passou a recusar `null` nos campos obrigatórios, e testes cobrem esse caso.
+
+### Decisões de design
+
+A IA poderia justificar Docker, PostgreSQL, migrations e interfaces abstratas para o repository. Todas foram **recusadas de propósito**: este é um MVP, e cada uma dessas peças aumentaria a complexidade sem resolver nenhum problema atual. A arquitetura em camadas foi mantida porque isola o acesso ao banco e deixa essas evoluções baratas no futuro (veja [Limitações e próximos passos](#limitações-e-próximos-passos)).
+
+### Lições aprendidas
+
+- **Revisão humana continua indispensável.** Uma revisão de SOLID/DRY depois do código gerado encontrou regras de validação duplicadas, e elas foram centralizadas.
+- **Verificar vale nos dois sentidos.** Vale tanto para as sugestões da IA quanto para os alertas automáticos. Evidência pesa mais do que confiança.
+- **Testar como quem vai avaliar.** O repositório foi clonado do zero, e as instruções do README foram executadas com uv e com pip antes da entrega.
+- **Um bom prompt tem contexto, objetivo e restrições.** Deixar claro que era "um mini projeto simples" mudou a qualidade das sugestões.
+
+### Etapa por etapa
 
 | Etapa | Como a IA ajudou |
 |---|---|
@@ -151,7 +192,8 @@ O projeto foi construído em pareamento com o **Claude Code** (modelo **Claude O
 | Código | Models, repository, service e endpoints |
 | Testes | Fixtures com banco em memória e casos de sucesso e de erro |
 | Commits | Mensagens no padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/v1.0.0/) |
-| Documentação | Este README |
+| Automação | `Makefile` com os comandos do dia a dia |
+| Documentação | Este README e a captura de tela do Swagger |
 
 ## Limitações e próximos passos
 
