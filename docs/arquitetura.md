@@ -98,11 +98,15 @@ iwar-todo-list-akcit/
 │   ├── service.py       # regras de negócio
 │   └── routes.py        # endpoints (controller)
 ├── tests/
-│   └── test_tasks.py    # testes dos endpoints
+│   ├── conftest.py      # fixtures: banco em memória e cliente HTTP
+│   ├── test_service.py  # testes unitários do service
+│   └── test_api.py      # testes dos endpoints
 ├── docs/
 │   └── arquitetura.md   # este documento
 ├── pyproject.toml       # dependências e configuração (uv, Ruff, pytest)
 ├── uv.lock              # versões travadas
+├── requirements.txt     # exportado do uv.lock, para quem usa pip
+├── LICENSE
 └── README.md
 ```
 
